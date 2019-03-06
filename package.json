@@ -1,0 +1,61 @@
+{
+  "name": "react-dom-faster",
+  "version": "1.0.0",
+  "description": "alternative renderToStaticMarkup, faster than renderToStaticMarkup render to html",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && npm run build:es5 && npm run build:esm",
+    "watch": "npm run build:esm -- --watch",
+    "build:es5": "BUILD_TARGET=es5 babel src --out-dir lib",
+    "build:esm": "BUILD_TARGET=esm babel src --out-dir esm",
+    "clean": "rm -rf lib esm",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "esm/",
+    "lib/"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "*.{js,jsx}": [
+        "eslint --fix",
+        "git add"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackerwust/react-dom-faster.git"
+  },
+  "keywords": [
+    "fasterRenderToStaticMarkUp",
+    "renderToStaticMarkUp",
+    "react",
+    "react-dom"
+  ],
+  "author": "xiaochan(1427182960@qq.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hackerwust/react-dom-faster/issues"
+  },
+  "homepage": "https://github.com/hackerwust/react-dom-faster#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.1",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.5"
+  },
+  "dependencies": {
+    "react": "^16.8.4"
+  }
+}
