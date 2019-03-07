@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-06 21:50:29
+ * @Last Modified time: 2019-03-07 10:11:43
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -41,10 +41,15 @@ const convertAttr = (key, value) => {
 
 const h = function (type, attrs, ...children) {
     if (typeof type === 'function') {
-        const props = attrs || {};
+        const props = {
+            // assign default props
+            ...(type.defaultProps || {}),
+            ...(attrs || {})
+        };
+        // add children to props
         props.children = children;
         if (isReactComponent(type)) {
-            const instance = new type(attrs);
+            const instance = new type(props);
             reactLifeCylcle.forEach(hookName => instance[hookName] && instance[hookName]());
             return instance.render();
         } else {
