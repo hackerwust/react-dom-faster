@@ -28,7 +28,7 @@ class Hello extends React.Component {
         )
     }
 }
-renderToStaticMarkup(() => <Hello list={[1, 2, 3]}>);
+renderToStaticMarkup(() => <Hello list={[1, 2, 3]} />);
 ```
 The above outputs the following HTML:
 ```html
