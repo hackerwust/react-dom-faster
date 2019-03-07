@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-07 10:11:43
+ * @Last Modified time: 2019-03-07 12:44:16
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -39,15 +39,43 @@ const convertAttr = (key, value) => {
     return value;
 };
 
+const hChildren = (children) => {
+    const stack = children.reverse();
+    let html = '';
+    while (stack.length) {
+        const child = stack.pop();
+
+        // 处理组件返回null/undefined的情况
+        if (child === null || child === undefined) {
+            continue;
+        }
+
+        if (isArray(child)) {
+            for (let i = child.length; i--;) {
+                stack.push(child[i]);
+            }
+        } else {
+            // child有可能为用户自定义的纯string，如<li>{nameStr}</li>中的nameStr
+            // 也可能为经过h函数转换过的component html，对于这种不需要进行转义
+            html += avoidEscape[child] === true ? child : escape(child);
+        }
+    }
+    return html;
+};
+
 const h = function (type, attrs, ...children) {
+    if (type === React.Fragment) {
+        return hChildren(children);
+    }
     if (typeof type === 'function') {
         const props = {
             // assign default props
             ...(type.defaultProps || {}),
-            ...(attrs || {})
+            ...(attrs || {}),
+            // add children to props
+            children: children
         };
-        // add children to props
-        props.children = children;
+
         if (isReactComponent(type)) {
             const instance = new type(props);
             reactLifeCylcle.forEach(hookName => instance[hookName] && instance[hookName]());
@@ -58,7 +86,6 @@ const h = function (type, attrs, ...children) {
     }
 
     let html = `<${type}`;
-    const stack = children.reverse();
     if (attrs) {
         for (let key in attrs) {
             // 对于react key dangerouslySetInnerHTML onclick等属性不需要拼接到html上
@@ -74,24 +101,7 @@ const h = function (type, attrs, ...children) {
         if (attrs && attrs.dangerouslySetInnerHTML && attrs.dangerouslySetInnerHTML.__html) {
             html += attrs.dangerouslySetInnerHTML.__html;
         }
-        while (stack.length) {
-            const child = stack.pop();
-
-            // 处理组件返回null/undefined的情况
-            if (child === null || child === undefined) {
-                continue;
-            }
-
-            if (isArray(child)) {
-                for (let i = child.length; i--;) {
-                    stack.push(child[i]);
-                }
-            } else {
-                // child有可能为用户自定义的纯string，如<li>{nameStr}</li>中的nameStr
-                // 也可能为经过h函数转换过的component html，对于这种不需要进行转义
-                html += avoidEscape[child] === true ? child : escape(child);
-            }
-        }
+        html += hChildren(children);
         html += `</${type}>`;
     }
 

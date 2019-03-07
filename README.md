@@ -28,6 +28,7 @@ class Hello extends React.Component {
         )
     }
 }
+// 注意renderToStaticMarkup 里面需要传入函数，函数返回组件
 renderToStaticMarkup(() => <Hello list={[1, 2, 3]} />);
 ```
 The above outputs the following HTML:
