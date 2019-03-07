@@ -13,7 +13,7 @@ Via npm:
 ## Usage
 ```js
 import React from 'react';
-import { render } from 'react-dom-faster';
+import renderToStaticMarkup from 'react-dom-faster';
 
 class Hello extends React.Component {
     constructor (props) {
@@ -28,7 +28,7 @@ class Hello extends React.Component {
         )
     }
 }
-render(() => <Hello list={[1, 2, 3]}>);
+renderToStaticMarkup(() => <Hello list={[1, 2, 3]}>);
 ```
 The above outputs the following HTML:
 ```html
