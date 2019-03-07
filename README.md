@@ -6,7 +6,7 @@ alternative reactDomServer.renderToStaticMarkup, the spend time just 1/5 of rend
 ## react-dom-faster vs renderToStaticMarkup
 Environment： node v11.9.0
 
-| div数量(个) |  react-dom-faster time(ms) | renderToStaticMarkup time(ms) |
+| div数量(个) |  react-dom-faster time | renderToStaticMarkup time |
 | ------ | :------: | :------: |
 | 100 | ≈1ms | ≈7ms |
 | 500 | ≈2ms | ≈16ms |
