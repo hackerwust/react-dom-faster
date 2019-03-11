@@ -25,21 +25,6 @@ function SomeSpecialCase (props) {
     )
 }
 
-function SomeSpecialCase1 (props) {
-    const { list } = props;
-    return (
-        <div>
-            <ul className="container" style={{'backgroundColor': 'red'}}>
-                {list.map((item, index) => <li key={index}>{item}</li>)}
-            </ul>
-            <p dangerouslySetInnerHTML={{__html: '<div>this is dangerous div</div>'}}></p>
-            <React.Fragment>
-                <div>this is React.Fragment</div>
-            </React.Fragment>
-        </div>
-    )
-}
-
 test('some special case render, like className, dangerousSetInnerHTML', t => {
     const list = [1, 2, 3];
     t.is(
