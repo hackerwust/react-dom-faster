@@ -25,7 +25,7 @@ Via npm:
 
 ## Usage
 
-#### Direct generator html from react component
+#### Direct generate html from react component
 
 ```js
 import React from 'react';

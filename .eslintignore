@@ -8,3 +8,4 @@ release/*
 dist/*
 files/
 assets/
+test/
