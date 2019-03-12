@@ -10,14 +10,20 @@ class Panel extends React.Component {
         this.state = {
             name: '面板'
         };
+        this.show = false;
     }
 
     componentWillMount () {
-        console.log('panel will mount event executing');
+        this.show = true;
     }
 
     render () {
-        return <div>name:{this.state.name}</div>;
+        return (
+            <div>
+                <span>name:{this.state.name}</span>
+                {this.show ? <span>show</span> : null}
+            </div>
+        );
     }
 }
 

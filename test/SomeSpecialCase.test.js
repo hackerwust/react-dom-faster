@@ -8,16 +8,21 @@ function SomeSpecialCase (props) {
     const { list } = props;
     return (
         <div>
-            <ul className="container">
+            <ul className="container" data-list={`list-item-${list.length}`}>
                 {list.map((item, index) => <li key={index}>{item}</li>)}
             </ul>
-            <p dangerouslySetInnerHTML={{__html: '<div>this is dangerous div</div>'}}></p>
+            <p dangerouslySetInnerHTML={{__html: '<div className="coantiner-div">this is dangerous div</div>'}}></p>
             {/* comment */}
             {}
             {0}
-            {'0'}
+            &lt;&gt;&'"
+            {'string'}
             {null}
             {undefined}
+            {true}
+            {() => {}}
+            {NaN}
+            {Symbol('b')}
             <React.Fragment>
                 <div>this is React.Fragment</div>
             </React.Fragment>
