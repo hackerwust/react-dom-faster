@@ -10,11 +10,11 @@ export const isArray = arr => Object.prototype.toString.call(arr) === '[object A
 export const isReactComponent = component => !!(component && component.prototype && component.prototype.isReactComponent);
 
 // eslint-disable-next-line
-const map = {'&': 'amp', '<': 'lt', '>': 'gt', '"': 'quot', "'": 'apos'};
+const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'};
 // 转义特殊字符
 export const escape = (str) => {
     if (typeof str === 'string') {
-        return str.replace(/[&<>"']/g, s => `&${map[s]}`);
+        return str.replace(/[&<>"']/g, s => map[s]);
     } else {
         return str + '';
     }
