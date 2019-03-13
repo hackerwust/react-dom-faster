@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "scripts": {
-    "test": "ava",
+    "test": "NODE_ENV=production ava",
     "build": "npm run clean && npm run build:es5 && npm run build:esm",
     "watch": "npm run build:esm -- --watch",
     "build:es5": "BUILD_TARGET=es5 babel src --out-dir lib",
