@@ -72,7 +72,7 @@ The above outputs the following HTML:
 import { h } from 'react-dom-faster';
 const list = [1, 2, 3];
 const html = (
-    <ul>
+    <ul className='container' data-name='ul'>
        {list.map(item => <li>{item}</li>)}
     </ul>
 );
@@ -80,7 +80,7 @@ const html = (
 ```
 The above outputs the following HTML:
 ```html
-<ul>
+<ul class="container" data-name="ul">
     <li>1</li>
     <li>2</li>
     <li>3</li>

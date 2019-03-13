@@ -1,6 +1,15 @@
-import { transformToMap } from './util';
+import { toMap } from '../utils';
 
-const filterAttrs = transformToMap([
+const reversedDomAttrs = Object.create(null);
+
+toMap([
+    'children',
+    'dangerouslySetInnerHTML',
+    'defaultValue',
+    'defaultChecked',
+    'innerHTML',
+    'suppressContentEditableWarning',
+    'suppressHydrationWarning',
     'key',
     'dangerouslySetInnerHTML',
     'onBlur',
@@ -77,6 +86,6 @@ const filterAttrs = transformToMap([
     'onTransitionEnd',
     'onWaiting',
     'onWheel'
-]);
+], reversedDomAttrs);
 
-export default filterAttrs;
+export default reversedDomAttrs;

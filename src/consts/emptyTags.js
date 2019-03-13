@@ -1,6 +1,8 @@
-import { transformToMap } from './util';
+import { toMap } from '../utils';
 
-const emptyTags = transformToMap([
+const emptyTags = Object.create(null);
+
+toMap([
     'area',
     'base',
     'br',
@@ -17,6 +19,6 @@ const emptyTags = transformToMap([
     'source',
     'track',
     'wbr'
-]);
+], emptyTags);
 
 export default emptyTags;
