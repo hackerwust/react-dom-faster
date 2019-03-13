@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-13 13:07:14
+ * @Last Modified time: 2019-03-13 14:35:32
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -22,7 +22,6 @@ import {
     reactLifeCylcle
 } from './consts';
 
-const avoidEscape = Object.create(null);
 const oldH = React.createElement;
 
 const convertStyleAttr = (value) => {
@@ -44,23 +43,6 @@ const getStaticMarkupAttrStr = (attrs) => {
         const domAttr = domAttrs[key];
         const data = attrs[key];
         if (key === 'style' && data) {
-            /*
-            function _typeof(obj) {
-                if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-                    _typeof = function _typeof(obj) {
-                        return typeof obj;
-                    };
-                } else {
-                    _typeof = function _typeof(obj) {
-                        return obj
-                            && typeof Symbol === "function"
-                            && obj.constructor === Symbol
-                            && obj !== Symbol.prototype ? "symbol" : typeof obj;
-                    };
-                }
-                return _typeof(obj);
-            }
-            */
             // 这里不使用typeof xxx === 'object'，babel会将其转化为_typeof函数
             let value = typeof data === 'string'
                 ? convertStyleAttr(data)
@@ -87,22 +69,39 @@ const hChildren = (children) => {
     let html = '';
     while (stack.length) {
         const child = stack.pop();
-        if  (child && child.push) { //数组
+        // 经过h函数生成的html
+        if (child && child.html) {
+            html += child.html;
+            continue;
+        }
+
+        // string
+        if (typeof child === 'string') {
+            // child有可能为用户自定义的纯string，如<li>{nameStr}</li>中的nameStr,需要进行转义
+            html += escape(child);
+            continue;
+        }
+
+        // number
+        if (typeof child === 'number') {
+            html += child + '';
+            continue;
+        }
+
+        // array
+        if  (child && child.push) {
             for (let i = child.length; i--;) {
                 stack.push(child[i]);
             }
-            continue;
-        }
-        if (typeof child === 'string' || typeof child === 'number') {
-            // child有可能为用户自定义的纯string，如<li>{nameStr}</li>中的nameStr
-            // 也可能为经过h函数转换过的component html，对于这种不需要进行转义
-            html += avoidEscape[child] === true ? child : escape(child);
             continue;
         }
     }
     return html;
 };
 
+/**
+ *  return string | object
+ * */
 const h = function (type, attrs, ...children) {
     attrs = attrs || {};
     // dom element
@@ -118,13 +117,12 @@ const h = function (type, attrs, ...children) {
         } else {
             html += '/>';
         }
-        avoidEscape[html] = true;
-        return html;
+        return { html };
     }
 
     // React.Fragment
     if (type === React.Fragment) {
-        return hChildren(children);
+        return { html: hChildren(children) };
     }
 
     // class component
@@ -154,7 +152,7 @@ export default function fastRenderToStaticMarkup (renderComponent) {
     React.createElement = h;
     const html = renderComponent();
     React.createElement = oldH;
-    return html;
+    return html.html ? html.html : html;
 }
 
 export { h }

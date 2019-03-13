@@ -23,8 +23,18 @@ function Component () {
             {NaN}
             {Symbol('test')}
             <React.Fragment>
-                <div>this is React.Fragment</div>
+                <div>
+                    this is React.Fragment
+                    <React.Fragment>
+                       123
+                    </React.Fragment>
+                </div>
             </React.Fragment>
+            <h1>
+                <div>this is h1</div>
+            </h1>
+            <br/>
+            <input type='text' />
         </div>
     )
 }

@@ -10,10 +10,10 @@ Environment： node(v11.9.0) react-dom(v16.8.3)
 
 | jsx div(个) |  react-dom-faster time | renderToStaticMarkup time |
 | ------ | :------: | :------: |
-| 100 | ≈1.5ms | ≈3.5ms |
-| 500 | ≈2.5ms | ≈7ms |
-| 1000 | ≈3ms | ≈9ms |
-| 1000 | ≈17ms | ≈27ms |
+| 100 | ≈1ms | ≈3ms |
+| 500 | ≈1.5ms | ≈4ms |
+| 1000 | ≈2ms | ≈7.5ms |
+| 5000 | ≈10ms | ≈25ms |
 
 ---
 
