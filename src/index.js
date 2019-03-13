@@ -2,14 +2,13 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-12 20:53:28
+ * @Last Modified time: 2019-03-13 13:07:14
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
  */
 import React from 'react';
 import {
-    isArray,
     isReactComponent,
     escape,
     camelToKebab,
@@ -24,6 +23,7 @@ import {
 } from './consts';
 
 const avoidEscape = Object.create(null);
+const oldH = React.createElement;
 
 const convertStyleAttr = (value) => {
     let styleStr = '';
@@ -36,8 +36,6 @@ const convertStyleAttr = (value) => {
 const joinDomAttr = (key, value) => ` ${key}="${value}"`;
 
 const getStaticMarkupAttrStr = (attrs) => {
-    if (!attrs) { return ''; }
-
     let attrStr = '';
     for (let key in attrs) {
         if (filterAttrs[key]) {
@@ -45,10 +43,26 @@ const getStaticMarkupAttrStr = (attrs) => {
         }
         const domAttr = domAttrs[key];
         const data = attrs[key];
-        // style
         if (key === 'style' && data) {
-            // 对于style属性暂时不转义
-            const value = typeof data === 'object'
+            /*
+            function _typeof(obj) {
+                if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+                    _typeof = function _typeof(obj) {
+                        return typeof obj;
+                    };
+                } else {
+                    _typeof = function _typeof(obj) {
+                        return obj
+                            && typeof Symbol === "function"
+                            && obj.constructor === Symbol
+                            && obj !== Symbol.prototype ? "symbol" : typeof obj;
+                    };
+                }
+                return _typeof(obj);
+            }
+            */
+            // 这里不使用typeof xxx === 'object'，babel会将其转化为_typeof函数
+            let value = typeof data === 'string'
                 ? convertStyleAttr(data)
                 : data;
             attrStr += joinDomAttr(key, value);
@@ -73,7 +87,7 @@ const hChildren = (children) => {
     let html = '';
     while (stack.length) {
         const child = stack.pop();
-        if  (isArray(child)) {
+        if  (child && child.push) { //数组
             for (let i = child.length; i--;) {
                 stack.push(child[i]);
             }
@@ -90,46 +104,53 @@ const hChildren = (children) => {
 };
 
 const h = function (type, attrs, ...children) {
+    attrs = attrs || {};
+    // dom element
+    if (typeof type === 'string') {
+        let html = `<${type}${getStaticMarkupAttrStr(attrs)}`;
+        if (!emptyTags[type]) {
+            html += '>';
+            if (attrs && attrs.dangerouslySetInnerHTML) {
+                html += attrs.dangerouslySetInnerHTML.__html;
+            }
+            html += hChildren(children);
+            html += '</' + type + '>';
+        } else {
+            html += '/>';
+        }
+        avoidEscape[html] = true;
+        return html;
+    }
+
+    // React.Fragment
     if (type === React.Fragment) {
         return hChildren(children);
     }
-    if (typeof type === 'function') {
+
+    // class component
+    if (isReactComponent(type)) {
         const props = {
-            // assign default props
             ...(type.defaultProps || {}),
-            ...(attrs || {}),
-            // add children to props
+            ...attrs,
             children: children
         };
-
-        if (isReactComponent(type)) {
-            const instance = new type(props);
-            reactLifeCylcle.forEach(hookName => instance[hookName] && instance[hookName]());
-            return instance.render();
-        } else {
-            return type(props);
-        }
+        const instance = new type(props);
+        reactLifeCylcle.forEach(hookName => instance[hookName] && instance[hookName]());
+        return instance.render();
     }
 
-    let html = `<${type}${getStaticMarkupAttrStr(attrs)}`;
-
-    if (!emptyTags[type]) {
-        html += '>';
-        if (attrs && attrs.dangerouslySetInnerHTML) {
-            html += attrs.dangerouslySetInnerHTML.__html;
-        }
-        html += hChildren(children);
-        html += `</${type}>`;
-    } else {
-        html += '/>';
+    // function component
+    if (typeof type === 'function') {
+        const props = {
+            ...(type.defaultProps || {}),
+            ...attrs,
+            children: children
+        };
+        return type(props);
     }
-
-    avoidEscape[html] = true;
-    return html;
 };
 
 export default function fastRenderToStaticMarkup (renderComponent) {
-    const oldH = React.createElement;
     React.createElement = h;
     const html = renderComponent();
     React.createElement = oldH;

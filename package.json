@@ -1,6 +1,6 @@
 {
   "name": "react-dom-faster",
-  "version": "1.1.2",
+  "version": "2.0.1",
   "description": "alternative renderToStaticMarkup, faster than renderToStaticMarkup render to html",
   "main": "lib/index.js",
   "module": "esm/index.js",
@@ -11,7 +11,7 @@
     "build:es5": "BUILD_TARGET=es5 babel src --out-dir lib",
     "build:esm": "BUILD_TARGET=esm babel src --out-dir esm",
     "clean": "rm -rf lib esm",
-    "compare": "babel-node --presets @babel/preset-react test/compareTime.js",
+    "compare": "NODE_ENV=production babel-node --presets @babel/preset-react test/compareTime.js",
     "prepublishOnly": "npm run build"
   },
   "files": [

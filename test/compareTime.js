@@ -1,6 +1,5 @@
 import React from 'react';
-
-import renderToStaticFaster from '../src';
+import renderToStaticFaster from '../esm';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 class Panel extends React.Component {
@@ -36,7 +35,7 @@ class ClassComponent extends React.Component {
         const { list } = this.props;
         return (
             <div className='container'>
-                <Panel />
+                {/* <Panel /> */}
                 <ul className='function-list'>
                     {list.map((item, index) => <li key={index}>{item}</li>)}
                 </ul>
@@ -45,7 +44,7 @@ class ClassComponent extends React.Component {
     }
 }
 
-const list = Array.from({length: 100}, (item, index) => index);
+const list = Array.from({length: 5000}, (item, index) => index);
 
 console.time('react-dom-faster render');
 renderToStaticFaster(() => <ClassComponent list={list}/>);
