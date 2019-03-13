@@ -72,7 +72,7 @@ The above outputs the following HTML:
 ```js
 import { h } from 'react-dom-faster';
 const list = [1, 2, 3];
-const html = (
+const { html } = (
     <ul className='container' data-name='ul'>
        {list.map(item => <li>{item}</li>)}
     </ul>
