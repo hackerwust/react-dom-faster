@@ -44,7 +44,7 @@ class ClassComponent extends React.Component {
     }
 }
 
-const list = Array.from({length: 5000}, (item, index) => index);
+const list = Array.from({length: 500}, (item, index) => index);
 
 console.time('react-dom-faster render');
 renderToStaticFaster(() => <ClassComponent list={list}/>);

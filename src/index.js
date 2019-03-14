@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-13 14:35:32
+ * @Last Modified time: 2019-03-14 16:48:31
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -18,8 +18,7 @@ import {
 import {
     domAttrs,
     emptyTags,
-    filterAttrs,
-    reactLifeCylcle
+    filterAttrs
 } from './consts';
 
 const oldH = React.createElement;
@@ -27,12 +26,12 @@ const oldH = React.createElement;
 const convertStyleAttr = (value) => {
     let styleStr = '';
     for (let cssProperty in value) {
-        styleStr += `${camelToKebab(cssProperty)}:${value[cssProperty]};`;
+        styleStr += camelToKebab(cssProperty) + ':' + value[cssProperty] + ';';
     }
     return styleStr;
 };
 
-const joinDomAttr = (key, value) => ` ${key}="${value}"`;
+const joinDomAttr = (key, value) => ' ' + key + '="' + value + '"';
 
 const getStaticMarkupAttrStr = (attrs) => {
     let attrStr = '';
@@ -70,7 +69,7 @@ const hChildren = (children) => {
     while (stack.length) {
         const child = stack.pop();
         // 经过h函数生成的html
-        if (child && child.html) {
+        if (child && child.hasOwnProperty('html')) {
             html += child.html;
             continue;
         }
@@ -100,16 +99,16 @@ const hChildren = (children) => {
 };
 
 /**
- *  return string | object
+ *  @return string | object
  * */
 const h = function (type, attrs, ...children) {
     attrs = attrs || {};
     // dom element
     if (typeof type === 'string') {
-        let html = `<${type}${getStaticMarkupAttrStr(attrs)}`;
+        let html = '<' + type + getStaticMarkupAttrStr(attrs);
         if (!emptyTags[type]) {
             html += '>';
-            if (attrs && attrs.dangerouslySetInnerHTML) {
+            if (attrs.hasOwnProperty('dangerouslySetInnerHTML')) {
                 html += attrs.dangerouslySetInnerHTML.__html;
             }
             html += hChildren(children);
@@ -133,7 +132,12 @@ const h = function (type, attrs, ...children) {
             children: children
         };
         const instance = new type(props);
-        reactLifeCylcle.forEach(hookName => instance[hookName] && instance[hookName]());
+        instance.props = props;
+        // 这里不用forEach，性能低
+        // ['componentWillMount', 'UNSAFE_componentWillMount'].forEach(hookName => instance.hasOwnProperty(hookName) && instance[hookName]());
+        // life cycle hooks
+        instance.componentWillMount && instance.componentWillMount();
+        instance.UNSAFE_componentWillMount && instance.UNSAFE_componentWillMount();
         return instance.render();
     }
 
@@ -152,7 +156,7 @@ export default function fastRenderToStaticMarkup (renderComponent) {
     React.createElement = h;
     const html = renderComponent();
     React.createElement = oldH;
-    return html.html ? html.html : html;
+    return html.hasOwnProperty('html') ? html.html : html;
 }
 
 export { h }
