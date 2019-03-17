@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-14 16:48:31
+ * @Last Modified time: 2019-03-17 11:19:40
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -81,12 +81,6 @@ const hChildren = (children) => {
             continue;
         }
 
-        // number
-        if (typeof child === 'number') {
-            html += child + '';
-            continue;
-        }
-
         // array
         if  (child && child.push) {
             for (let i = child.length; i--;) {
@@ -94,6 +88,13 @@ const hChildren = (children) => {
             }
             continue;
         }
+
+        // number
+        if (typeof child === 'number') {
+            html += child + '';
+            continue;
+        }
+
     }
     return html;
 };
