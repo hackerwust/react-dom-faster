@@ -1,6 +1,6 @@
 {
   "name": "react-dom-faster",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "alternative renderToStaticMarkup, faster than renderToStaticMarkup render to html",
   "main": "lib/index.js",
   "module": "esm/index.js",
