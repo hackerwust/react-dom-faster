@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-04-18 14:51:39
+ * @Last Modified time: 2019-04-18 16:09:47
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -164,7 +164,11 @@ export default function fastRenderToStaticMarkup (renderComponent) {
     React.createElement = h;
     const html = renderComponent();
     React.createElement = oldH;
-    return html.hasOwnProperty('html') ? html.html : html;
+    if (!html) {
+        return '';
+    } else {
+        return html.hasOwnProperty('html') ? html.html : html;
+    }
 }
 
 export { h }
