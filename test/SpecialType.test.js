@@ -9,6 +9,7 @@ function Component () {
         <div>
             <p
                 className="container"
+                style={{"height": 0, width: 55, zIndex: 1}}
                 dangerouslySetInnerHTML={{__html: '<div className="son-div">this is dangerous div</div>'}}
             >
             </p>

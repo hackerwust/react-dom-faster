@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-03-17 11:19:40
+ * @Last Modified time: 2019-04-18 14:51:39
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -18,15 +18,22 @@ import {
 import {
     domAttrs,
     emptyTags,
-    filterAttrs
+    filterAttrs,
+    unitLessNumber
 } from './consts';
 
 const oldH = React.createElement;
 
 const convertStyleAttr = (value) => {
     let styleStr = '';
+    let delimiter = '';
     for (let cssProperty in value) {
-        styleStr += camelToKebab(cssProperty) + ':' + value[cssProperty] + ';';
+        let cssPValue = value[cssProperty];
+        if (typeof cssPValue === 'number' && cssPValue !== 0 && !unitLessNumber[cssProperty]) {
+            cssPValue += 'px';
+        }
+        styleStr += delimiter + camelToKebab(cssProperty) + ':' + cssPValue;
+        delimiter = ';';
     }
     return styleStr;
 };
@@ -44,8 +51,8 @@ const getStaticMarkupAttrStr = (attrs) => {
         if (key === 'style' && data) {
             // 这里不使用typeof xxx === 'object'，babel会将其转化为_typeof函数
             let value = typeof data === 'string'
-                ? convertStyleAttr(data)
-                : data;
+                ? data
+                : convertStyleAttr(data);
             attrStr += joinDomAttr(key, value);
             continue;
         }
