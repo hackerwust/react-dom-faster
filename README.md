@@ -5,6 +5,25 @@ alternative react-dom/server renderToStaticMarkup, but react-dom-faster is faste
 renderToStaticMarkup transform vdom to html, so spend much time.
 react-dom-faster join the html of component without vdom, has high performance.
 
+### Difference With renderToStaticMarkup
+react-dom-faster does not make additional conversions for html attribute.
+
+for example: 
+renderToStaticMarkup transform 
+```
+<div hidden="true" loop="true" capture="true" download="true"></div>
+```
+to `<div hidden="" loop="" capture="" download=""></div>`
+
+
+react-dom-faster transform
+```
+<div hidden="true" loop="true" capture="true" download="true"></div>
+```
+to `<div hidden="true" loop="true" capture="true" download="true"></div>`
+
+---
+
 ## react-dom-faster vs renderToStaticMarkup
 Environment： node(v11.9.0) react-dom(v16.8.3)
 
@@ -30,7 +49,7 @@ Via npm:
 
 ```js
 import React from 'react';
-import renderToStaticMarkup from 'react-dom-faster';
+import renderToHtml from 'react-dom-faster';
 
 class Hello extends React.Component {
     constructor (props) {
@@ -46,7 +65,7 @@ class Hello extends React.Component {
     }
 }
 // 注意renderToStaticMarkup 里面需要传入函数，函数返回组件
-renderToStaticMarkup(() => <Hello list={[1, 2, 3]} />);
+renderToHtml(() => <Hello list={[1, 2, 3]} />);
 ```
 The above outputs the following HTML:
 ```html
@@ -87,4 +106,3 @@ The above outputs the following HTML:
     <li>3</li>
 </ul>
 ```
-
