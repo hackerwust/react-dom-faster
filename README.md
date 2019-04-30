@@ -1,8 +1,7 @@
 # react-dom-faster
 
 ### **Render React Component to HTML, without VDOM**
-alternative react-dom/server renderToStaticMarkup, but react-dom-faster is faster.
-renderToStaticMarkup transform vdom to html, so spend much time.
+react-dom/server renderToStaticMarkup transform vdom to html, spend much time.
 react-dom-faster join the html of component without vdom, has high performance.
 
 ### Difference With renderToStaticMarkup
