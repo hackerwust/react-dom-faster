@@ -141,9 +141,6 @@ const h = function (type, attrs, ...children) {
         };
         const instance = new type(props);
         instance.props = props;
-        // 这里不用forEach，性能低
-        // ['componentWillMount', 'UNSAFE_componentWillMount'].forEach(hookName => instance.hasOwnProperty(hookName) && instance[hookName]());
-        // life cycle hooks
         instance.componentWillMount && instance.componentWillMount();
         instance.UNSAFE_componentWillMount && instance.UNSAFE_componentWillMount();
         return instance.render();
