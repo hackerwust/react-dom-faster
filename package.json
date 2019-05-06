@@ -31,6 +31,9 @@
       ]
     }
   },
+  "publishConfig": {
+    "url": "http://registry.npmjs.org"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hackerwust/react-dom-faster.git"

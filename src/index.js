@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-04-18 16:09:47
+ * @Last Modified time: 2019-05-07 00:40:34
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -22,7 +22,31 @@ import {
     unitLessNumber
 } from './consts';
 
-const oldH = React.createElement;
+const isValidElement = (element) => element && element.hasOwnProperty('html');
+const cloneElement = function (element) {
+    if (isValidElement(element)) {
+        return element.html;
+    } else {
+        return '';
+    }
+};
+
+const reactRuntime = {
+    oldH: React.createElement,
+    oldIsValidElement: React.isValidElement,
+    oldCloneElement: React.cloneElement,
+    mock: function () {
+        React.createElement = h;
+        React.isValidElement = isValidElement;
+        React.cloneElement = cloneElement;
+
+    },
+    recovery: function () {
+        React.createElement = this.oldH;
+        React.isValidElement = this.oldIsValidElement;
+        React.cloneElement = this.cloneElement;
+    }
+};
 
 const convertStyleAttr = (value) => {
     let styleStr = '';
@@ -124,7 +148,11 @@ const h = function (type, attrs, ...children) {
         } else {
             html += '/>';
         }
-        return { html };
+        return {
+            html,
+            props: attrs,
+            children: children
+        };
     }
 
     // React.Fragment
@@ -158,9 +186,11 @@ const h = function (type, attrs, ...children) {
 };
 
 export default function fastRenderToStaticMarkup (renderComponent) {
-    React.createElement = h;
+    // mock react interface runtime
+    reactRuntime.mock();
     const html = renderComponent();
-    React.createElement = oldH;
+    // recovery react interface runtime
+    reactRuntime.recovery();
     if (!html) {
         return '';
     } else {
