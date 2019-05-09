@@ -41,6 +41,7 @@ class ClassComponent extends React.Component {
                 <ul className='function-list'>
                     {list.map((item, index) => <li key={index}>{item}</li>)}
                 </ul>
+                {[1, 2, 3, 4]}
             </div>
         );
     }

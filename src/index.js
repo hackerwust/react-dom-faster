@@ -2,7 +2,7 @@
  * @Author: xiaochan
  * @Date: 2019-03-06 20:52:57
  * @Last Modified by: xiaochan
- * @Last Modified time: 2019-05-07 00:40:34
+ * @Last Modified time: 2019-05-09 20:55:13
  *
  * render React Component to html
  * but don't create virtual dom, is faster than renderToStaticMarkup
@@ -28,6 +28,14 @@ const cloneElement = function (element) {
         return element.html;
     } else {
         return '';
+    }
+};
+const attachAttrsToComponent = (component, attrs) => {
+    if (isValidElement(component)) {
+      component.key = attrs.key;
+      component.dangerouslySetInnerHTML = attrs.dangerouslySetInnerHTML;
+      component.children = attrs.children;
+      component.props = attrs;
     }
 };
 
@@ -133,8 +141,18 @@ const hChildren = (children) => {
 /**
  *  @return string | object
  * */
-const h = function (type, attrs, ...children) {
+const h = function (type, attrs) {
+    let children = [];
+    for (let i = 2, len = arguments.length; i < len; i++) {
+        const arg = arguments[i];
+        if (arg && arg.push && arg.pop) {
+            children = children.concat(arg);
+        } else {
+            children.push(arg);
+        }
+    }
     attrs = attrs || {};
+    attrs.children = children;
     // dom element
     if (typeof type === 'string') {
         let html = '<' + type + getStaticMarkupAttrStr(attrs);
@@ -148,11 +166,9 @@ const h = function (type, attrs, ...children) {
         } else {
             html += '/>';
         }
-        return {
-            html,
-            props: attrs,
-            children: children
-        };
+        const result = { html };
+        attachAttrsToComponent(result, {});
+        return result;
     }
 
     // React.Fragment
@@ -164,25 +180,34 @@ const h = function (type, attrs, ...children) {
     if (isReactComponent(type)) {
         const props = {
             ...(type.defaultProps || {}),
-            ...attrs,
-            children: children
+            ...attrs
         };
         const instance = new type(props);
         instance.props = props;
         instance.componentWillMount && instance.componentWillMount();
         instance.UNSAFE_componentWillMount && instance.UNSAFE_componentWillMount();
-        return instance.render();
+        let result = instance.render();
+        if (!result) {
+            result = { html: '' };
+        }
+        attachAttrsToComponent(result, attrs);
+        return result;
     }
 
     // function component
     if (typeof type === 'function') {
         const props = {
             ...(type.defaultProps || {}),
-            ...attrs,
-            children: children
+            ...attrs
         };
-        return type(props);
+        let result = type(props);
+        if (!result) {
+            result = { html: '' };
+        }
+        attachAttrsToComponent(result, attrs);
+        return result;
     }
+    return '';
 };
 
 export default function fastRenderToStaticMarkup (renderComponent) {
