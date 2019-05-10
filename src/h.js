@@ -134,7 +134,7 @@ const h = function (type, attrs) {
             html += '/>';
         }
         const result = { html };
-        attachAttrsToComponent(result, {});
+        attachAttrsToComponent(result, attrs);
         return result;
     }
 
